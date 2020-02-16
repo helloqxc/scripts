@@ -1,52 +1,48 @@
-# QQ 音乐
+# 中国联通
 
 > 代码已同时兼容 Surge & QuanX, 使用同一份签到脚本即可
 
-> QuanX 需要 v1.0.6-build195 及以后版本
+> 注意获取 Cookie 有两条脚本
 
-> QuanX 需要 v1.0.6-build195 及以后版本
-
-> QuanX 需要 v1.0.6-build195 及以后版本
-
-> 2020.2.13 腾讯系的 Cookie 果然活不久, 弃坑!
+> 如果你希望显示话费、语音、流量信息，请在支付宝中搜索小程序“中国联通”并授权登录一次
 
 ## 配置 (Surge)
 
 ```properties
 [MITM]
-*.y.qq.com
+act.10010.com
 
 [Script]
 # 注意获取Cookie有两条脚本
-http-request ^https:\/\/u.y.qq.com\/cgi\-bin\/musicu.fcg requires-body=true,script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/qqmusic/qqmusic.cookie.js
-http-response ^https:\/\/u.y.qq.com\/cgi\-bin\/musicu.fcg requires-body=true,script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/qqmusic/qqmusic.cookie.js
-cron "10 0 0 * * *" script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/qqmusic/qqmusic.js
+http-request ^https:\/\/act.10010.com\/SigninApp\/signin\/querySigninActivity.htm script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/10010/10010.cookie.js
+http-request ^https:\/\/act.10010.com\/SigninApp(.*?)\/signin\/daySign.do script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/10010/10010.cookie.js
+cron "10 0 0 * * *" script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/10010/10010.js
 ```
 
 ## 配置 (QuanX)
 
 ```properties
 [MITM]
-*.y.qq.com
+act.10010.com
 
 [rewrite_local]
-# 195及以后版本 (注意获取Cookie有两条脚本)
-^https:\/\/u.y.qq.com\/cgi\-bin\/musicu.fcg url script-request-body qqmusic.cookie.js
-^https:\/\/u.y.qq.com\/cgi\-bin\/musicu.fcg url script-response-body qqmusic.cookie.js
+# 注意获取Cookie有两条脚本
+^https:\/\/act.10010.com\/SigninApp\/signin\/querySigninActivity.htm url script-request-header 10010.cookie.js
+^https:\/\/act.10010.com\/SigninApp(.*?)\/signin\/daySign.do url script-request-header 10010.cookie.js
 
 [task_local]
-1 0 * * * qqmusic.js
+1 0 * * * 10010.js
 ```
 
 ## 说明
 
-1. 先把`*.y.qq.com`加到`[MITM]`
+1. 先把`act.10010.com`加到`[MITM]`
 2. 再配置重写规则:
    - Surge: 把两条远程脚本放到`[Script]`
-   - QuanX: 把`qqmusic.cookie.js`和`qqmusic.js`传到`On My iPhone - Quantumult X - Scripts` (传到 iCloud 相同目录也可, 注意要打开 quanx 的 iCloud 开关)
-3. 打开 APP 然后手动签到 1 次
-4. 系统提示: `获取Cookie: 成功`
-5. 最后就可以把第 1 条脚本注释掉了
+   - QuanX: 把`10010.cookie.js`和`10010.js`传到`On My iPhone - Quantumult X - Scripts` (传到 iCloud 相同目录也可, 注意要打开 quanx 的 iCloud 开关)
+3. 打开 APP , 进入签到页面, 系统提示: `获取刷新链接: 成功`
+4. 然后手动签到 1 次, 系统提示: `获取Cookie: 成功`
+5. 把获取 Cookie 的脚本注释掉
 6. 运行一次脚本, 如果提示重复签到, 那就算成功了!
 
 > 第 1 条脚本是用来获取 cookie 的, 用浏览器访问一次获取 cookie 成功后就可以删掉或注释掉了, 但请确保在`登录成功`后再获取 cookie.
